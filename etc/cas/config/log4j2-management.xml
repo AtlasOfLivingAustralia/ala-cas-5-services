@@ -2,7 +2,7 @@
 <!-- Specify the refresh internal in seconds. -->
 <Configuration monitorInterval="60">
     <Properties>
-        <!-- 
+        <!--
         Default log directory is the current directory but that can be overridden with -Dcas.log.dir=<logdir>
         Or you can change this property to a new default
         -->

@@ -7,22 +7,28 @@ spring:
   application:
     name: "@pom.artifactId@"
   session:
+    enabled: false
     store-type: none
-    disable-redis-config-action: false
 
 ##
 # Embedded CAS Tomcat Container
 #
 server:
-  context-path: /cas-management
-  use-forward-headers: true
+  port: 8087
+  ssl:
+    enabled: false
+  servlet:
+    context-path: /cas-management
+  forward-headers-strategy: native
   tomcat:
-    remote_ip_header: x-forwarded-for
-    port-header: 'X-Forwarded-Port'
-    protocol_header: x-forwarded-proto
-    protocol-header-https-value: https
-    # Add IPv6 localhost to default list
-    internal-proxies: 10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.1[6-9]{1}\.\d{1,3}\.\d{1,3}|172\.2[0-9]{1}\.\d{1,3}\.\d{1,3}|172\.3[0-1]{1}\.\d{1,3}\.\d{1,3}|0:0:0:0:0:0:0:1|::1
+    remoteip:
+      remote-ip-header: x-forwarded-for
+      protocol-header: x-forwarded-proto
+      protocol-header-https-value: https
+      # Add IPv6 localhost to default list
+#      internal-proxies: 10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.1[6-9]{1}\.\d{1,3}\.\d{1,3}|172\.2[0-9]{1}\.\d{1,3}\.\d{1,3}|172\.3[0-1]{1}\.\d{1,3}\.\d{1,3}|0:0:0:0:0:0:0:1|::1
+    remote:
+      port-header: 'X-Forwarded-Port'
 
 cas:
   authn:
@@ -139,7 +145,13 @@ cas:
       password: password
 
 mgmt:
-  enable-version-control: false
+  enable-discovery-endpoint-call: true
+  version-control:
+    enabled: false
+  delegated:
+    enabled: false
+  user-properties-file: classpath:users.properties
+#mgmt.userReposDir=/etc/cas/user-repos
 
 # Override these for non-ALA deployments
 ala:

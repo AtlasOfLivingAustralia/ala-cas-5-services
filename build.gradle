@@ -1,0 +1,169 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://nexus.ala.org.au/content/groups/public/" }
+        mavenCentral()
+        gradlePluginPortal()     
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
+        classpath "io.freefair.gradle:maven-plugin:${project.gradleMavenPluginVersion}"
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven { url "https://nexus.ala.org.au/content/groups/public/" }
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/releases' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
+}
+
+apply plugin: "io.freefair.war-overlay"
+apply plugin: "war"
+apply plugin: "org.springframework.boot"
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin:"maven-publish"
+
+def casMgmtServerVersion = project.'casmgmt.version'
+
+project.ext."casMgmtServerVersion" = casMgmtServerVersion
+
+eclipse {
+    classpath {
+       downloadSources = true
+       downloadJavadoc = true
+    }
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+configurations.all {
+    resolutionStrategy {
+        cacheChangingModulesFor 0, "seconds"
+        cacheDynamicVersionsFor 0, "seconds"
+        preferProjectModules()
+    }
+}
+
+war {
+    entryCompression = ZipEntryCompression.STORED
+}
+
+springBoot {
+    mainClassName = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
+}
+
+bootWar {
+	if (project.hasProperty('executable')) {
+    	launchScript()
+	}
+
+	archiveName "cas-management.war"
+    baseName "cas-management"
+
+    excludeDevtools = false
+    entryCompression = ZipEntryCompression.STORED
+    overlays {
+        // https://docs.freefair.io/gradle-plugins/current/reference/#_io_freefair_war_overlay
+        // Note: The "excludes" property is only for files in the war dependency.
+        // If a jar is excluded from the war, it could be brought back into the final war as a dependency
+        // of non-war dependencies. Those should be excluded via normal gradle dependency exclusions.
+        cas {
+            from "org.apereo.cas:cas-mgmt-webapp${project.appServer}:${casMgmtServerVersion}@war"
+            provided = false
+            excludes = []
+        }
+    }
+}
+
+bootRun {
+    sourceResources sourceSets.main
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+dependencies {
+    // These deps are in the WAR overlay, but IntelliJ can not find them so
+    // they're replicated here.
+    compileOnly "org.apereo.cas:cas-server-core-configuration:$casVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-audit:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-authentication:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-authz:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-core:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-search:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-register:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-version-control:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-saml:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-oauth:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-webapp-config:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-webapp-init:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-delegated:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-dashboard:$casMgmtServerVersion"
+    compileOnly "org.apereo.cas:cas-mgmt-config-submissions:$casMgmtServerVersion"
+
+    // Other CAS Management dependencies/modules may be listed here...
+    compile "org.apereo.cas:cas-server-support-mongo-service-registry:$casVersion"
+
+//    implementation "org.apereo.cas:cas-server-support-session-mongo:${casVersion}"
+    implementation 'org.springframework.session:spring-session-data-mongodb:2.5.0'
+    implementation 'org.springframework.session:spring-session-core:2.5.2'
+    implementation 'org.springframework.data:spring-data-mongodb:3.2.4'
+    implementation 'org.mongodb:mongodb-driver-sync:4.3.1'
+
+//    implementation "org.apereo.cas:cas-mgmt-api-configuration:$casMgmtServerVersion"
+
+    runtime 'mysql:mysql-connector-java:8.0.26'
+}
+
+task run(group: "build", description: "Run the CAS managment web application in embedded container mode") {
+    dependsOn build
+    doLast {
+        def casRunArgs = Arrays.asList("-Xmx2048M -XX:+TieredCompilation -XX:TieredStopAtLevel=1".split(" "))
+        javaexec {
+            main = "-jar"
+            jvmArgs = casRunArgs
+            args = ["build/libs/cas-management.war"]
+            logger.info "Started ${commandLine}"
+        }
+    }
+}
+
+//bootWar {
+//
+//}
+
+task copyCasConfiguration(type: Copy, group: "build", description: "Copy the CAS configuration from this project to /etc/cas/config") {
+    from "etc/cas/config"
+    into new File('/etc/cas/config').absolutePath
+    doFirst {
+        new File('/etc/cas/config').mkdirs()
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name 'Nexus'
+            url "https://nexus.ala.org.au/content/repositories/${project.version.endsWith('-SNAPSHOT') ? 'snapshots' : 'releases' }"
+            credentials {
+                username = System.getenv('TRAVIS_DEPLOY_USERNAME')
+                password = System.getenv('TRAVIS_DEPLOY_PASSWORD')
+            }
+        }
+    }
+    publications {
+        mavenJar(MavenPublication) {
+            from components.web
+        }
+    }
+}

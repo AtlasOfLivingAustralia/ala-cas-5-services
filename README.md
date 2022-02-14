@@ -1,18 +1,17 @@
-ALA CAS Services Management [![Build Status](https://travis-ci.org/AtlasOfLivingAustralia/ala-cas-5-services.svg?branch=master)](https://travis-ci.org/AtlasOfLivingAustralia/ala-cas-5-services)
+CAS Management Overlay
 ============================
 
-ALA CAS Services management web application.
-
+CAS management web application WAR overlay for CAS with externalized configuration.
 
 # Versions
 
 ```xml
-<cas.version>5.2.x</cas.version>
+<cas.version>6.3.x</cas.version>
 ```
 
 # Requirements
 
-* JDK 1.8+
+* JDK 11
 
 # Build
 
@@ -35,13 +34,13 @@ To update `SNAPSHOT` versions run:
 ```
 
 ## Windows Build
+
 On Windows you can run build.cmd instead of build.sh. The usage may differ from build.sh, run "build.cmd help" for usage.
 
 ## Note
 
 If you are running the management web application on the same machine as the CAS server web application itself, 
 you will need to evaluate the build script and make sure the configuration files don't override each other.
-
 
 # Deployment
 
@@ -55,3 +54,13 @@ CAS will be available at:
 ## External
 
 Deploy resultant `target/cas-management.war`  to a servlet container of choice.
+
+### Dockerfile
+
+You can also use the native Docker tooling and the provided `Dockerfile` to build and run CAS Management.
+
+```bash
+chmod +x *.sh
+./docker-build.sh
+./docker-run.sh
+```

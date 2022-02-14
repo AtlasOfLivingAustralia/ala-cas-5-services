@@ -16,17 +16,16 @@ function help() {
 function clean() {
     rm -Rf *.log
     rm -Rf *.log.gz
-	./mvnw clean "$@"
+	./gradlew clean "$@"
 }
 
 function package() {
-	./mvnw clean package -T 5 "$@"
-	copy
+	./gradlew clean build "$@"
 }
 
 
 function run() {
-	package && java -Xdebug -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n -jar target/cas-management.war 
+	package && java -Xdebug -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n -jar build/libs/cas-management.war 
 }
 
 if [ $# -eq 0 ]; then
@@ -43,7 +42,7 @@ case "$1" in
 "clean")
 	shift
     clean "$@"
-    ;;   
+    ;;
 "package")
 	shift
     package "$@"
