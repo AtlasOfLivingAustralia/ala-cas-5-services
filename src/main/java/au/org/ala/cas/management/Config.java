@@ -45,7 +45,7 @@ public class Config {
 
     @Bean
     @ConditionalOnMissingBean(MongoClient.class)
-    public MongoClient mongo(MongoProperties properties, Environment environment,
+    public MongoClient mongoClient(MongoProperties properties, Environment environment,
                              ObjectProvider<MongoClientSettingsBuilderCustomizer> builderCustomizers,
                              ObjectProvider<MongoClientSettings> settings) {
         return new MongoClientFactory(properties, environment,
