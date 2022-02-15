@@ -15,7 +15,7 @@ before_install:
 - date
 - mkdir -p ~/.m2
 - wget -q -O ~/.m2/settings.xml https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_maven_settings.xml
-after_success: '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./mvnw deploy -DskipTests=true'
+after_success: '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./gradlew publish'
 env:
   global:
   - secure: Z45y9zN9PXsLePWSOZ07rOY2Vz1GlJwIDIuLoqaeul9C+TMeK5TLzV5nXQUqraimQDS1nW1fYeyoltyP/pa1VNk2O9T8Zfs+2SrE17ftN1821rmPf3UFsofKmrocCuOPs91qdmmpUvlA8XA+NZNBJAdjRCTPNNBVzuPFXNrjc1CICcu1hfUr6Sh4owIOsSSyRNdk6v+Id/ibWxrh2SiTSVR4t4Poqd31g2daA66LqLNS/taGCjQ1NYjgRFSLfK4GP48amrQrLPBc5zoHyK518JVoAQwvNTWo0Z2m0/jeyZlpPEuA8SQi1GcECZIwr/HMrtzf5mwTG+0IOmGG+TuHs1x9QewVoBSlkARz5BjvwGLiJJ9vmQnFdR0acLrxm207h6Ks7Q467E/FtJFftsmHr4ThKmHPHZtknJqKoZ0n1+jTkGh8X25oq+/D3QzdtXgwlf3bYBV8UXrpI6L/FE+Abqzlt7EmSMTRZJlhybyg8rGfMqSmhDjmvjy5fRKubEKL2aGpqaQ5s1bBz3PmLKJEO3Oh210qJIVJJSQHaa2FZhJcjIqjU7mOD3bVaxqc51YaAzZ/8rj37J63DQTrAWJouVAw1kRYJdRacljBqbnb8kRKR7Nm3pQw4jUnFXIXQf+s3gh4AduDSHky7sT2oDEwyuYnypR9k7OeR8zT8KnpHYU=
