@@ -69,7 +69,8 @@ bootWar {
     	launchScript()
 	}
 
-	archiveName "cas-management.war"
+    classifier = 'exec'
+//	archiveName "cas-management.war"
     baseName "cas-management"
 
     excludeDevtools = false
@@ -132,7 +133,7 @@ task run(group: "build", description: "Run the CAS managment web application in 
         javaexec {
             main = "-jar"
             jvmArgs = casRunArgs
-            args = ["build/libs/cas-management.war"]
+            args = ["build/libs/cas-management-$version.war"]
             logger.info "Started ${commandLine}"
         }
     }
@@ -163,7 +164,7 @@ publishing {
     }
     publications {
         mavenJar(MavenPublication) {
-            from components.web
+            artifact bootWar
         }
     }
 }
