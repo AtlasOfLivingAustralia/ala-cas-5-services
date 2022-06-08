@@ -1,66 +1,154 @@
-CAS Management Overlay
-============================
+# IMPORTANT NOTE<br/>******************************************************<br/>This repository is always automatically generated from the CAS Initializr. Do NOT submit pull requests here as the change-set will be overwritten on the next sync.To learn more, please visit the [CAS documentation](https://apereo.github.io/cas).<br/>******************************************************<br/>
+Apereo CAS WAR Overlay Template
+=====================================
 
-CAS management web application WAR overlay for CAS with externalized configuration.
+WAR Overlay Type: `cas-management-overlay`
 
 # Versions
+   
+- CAS Management `6.5.4`
+- CAS Server `6.5.4`
 
-```xml
-<cas.version>6.3.x</cas.version>
-```
-
-# Requirements
-
-* JDK 11
-
+                     
 # Build
 
-To see what commands are available to the build script, run:
+To build the project, use:
 
 ```bash
-./build.sh help
+# Use --refresh-dependencies to force-update SNAPSHOT versions
+./gradlew[.bat] clean build
 ```
 
-To package the final web application, run:
+To see what commands/tasks are available to the build script, run:
 
 ```bash
-./build.sh package
+./gradlew[.bat] tasks
 ```
 
-To update `SNAPSHOT` versions run:
+If you need to, on Linux/Unix systems, you can delete all the existing artifacts
+(artifacts and metadata) Gradle has downloaded using:
 
 ```bash
-./build.sh package -U
+# Only do this when absolutely necessary
+rm -rf $HOME/.gradle/caches/
 ```
 
-## Windows Build
+Same strategy applies to Windows too, provided you switch `$HOME` to its equivalent in the above command.
 
-On Windows you can run build.cmd instead of build.sh. The usage may differ from build.sh, run "build.cmd help" for usage.
+# Keystore
 
-## Note
+For the server to run successfully, you might need to create a keystore file.
+This can either be done using the JDK's `keytool` utility or via the following command:
 
-If you are running the management web application on the same machine as the CAS server web application itself, 
-you will need to evaluate the build script and make sure the configuration files don't override each other.
+```bash
+./gradlew[.bat] createKeystore
+```
+
+Use the password `changeit` for both the keystore and the key/certificate entries. 
+Ensure the keystore is loaded up with keys and certificates of the server.
+
+## Extension Modules
+
+Extension modules may be specified under the `dependencies` block of the [Gradle build script](build.gradle):
+
+```gradle
+dependencies {
+    implementation "org.apereo.cas:cas-server-some-module"
+    ...
+}
+```
+
+To collect the list of all project modules and dependencies in the overlay:
+
+```bash
+./gradlew[.bat] dependencies
+```                                                                       
+
+To see a full list of all project dependencies that are available for configuration and use:
+
+```bash
+curl https://localhost:8080/dependencies
+```     
+
+Or:
+
+```bash
+curl https://localhost:8080/actuator/info
+```
 
 # Deployment
 
-## Embedded Tomcat
+On a successful deployment via the following methods, the server will be available at:
 
-CAS will be available at:
+* `https://localhost:8443/cas-management`
 
-* `http://cas.server.name:8080/cas-management`
-* `https://cas.server.name:8443/cas-management`
+
+
+
+  
+## Executable WAR
+
+Run the server web application as an executable WAR. Note that running an executable WAR requires CAS to use an embedded container such as Apache Tomcat, Jetty, etc.
+
+The current servlet container is specified as `-tomcat`.
+
+```bash
+java -jar build/libs/cas-management.war
+```
+
+Or via:
+
+```bash
+./gradlew[.bat] run
+```
+
+Debug the CAS web application as an executable WAR:
+
+```bash
+./gradlew[.bat] debug
+```
+       
+Or via:
+
+```bash
+java -Xdebug -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=y -jar build/libs/cas-management.war
+```
+
+Run the CAS web application as a *standalone* executable WAR:
+
+```bash
+./gradlew[.bat] clean executable
+```
 
 ## External
 
-Deploy resultant `target/cas-management.war`  to a servlet container of choice.
+Deploy the binary web application file in `build/libs` after a successful build to a servlet container of choice.
 
-### Dockerfile
+# Docker
 
-You can also use the native Docker tooling and the provided `Dockerfile` to build and run CAS Management.
+The following strategies outline how to build and deploy CAS Docker images.
+
+## Jib
+
+The overlay embraces the [Jib Gradle Plugin](https://github.com/GoogleContainerTools/jib) to provide easy-to-use out-of-the-box tooling for building CAS docker images. Jib is an open-source Java containerizer from Google that lets Java developers build containers using the tools they know. It is a container image builder that handles all the steps of packaging your application into a container image. It does not require you to write a Dockerfile or have Docker installed, and it is directly integrated into the overlay.
+
+```bash
+# Running this task requires that you have Docker installed and running.
+./gradlew build jibDockerBuild
+```
+
+## Dockerfile
+
+You can also use the native Docker tooling and the provided `Dockerfile` to build and run.
 
 ```bash
 chmod +x *.sh
 ./docker-build.sh
 ./docker-run.sh
+```
+
+For convenience, an additional `docker-compose.yml` is also provided to orchestrate the build:
+
+```bash  
+docker-compose build
 ```

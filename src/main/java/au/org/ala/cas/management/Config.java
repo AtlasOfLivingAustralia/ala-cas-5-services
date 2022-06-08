@@ -2,13 +2,17 @@ package au.org.ala.cas.management;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.CasManagementConfigurationProperties;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mongo.MongoClientFactory;
 import org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.mongo.MongoPropertiesClientSettingsBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +32,7 @@ import java.util.stream.Collectors;
 )
 @ConditionalOnProperty(value = "spring.session.enabled", havingValue = "true", matchIfMissing = false)
 @EnableMongoHttpSession
-@EnableConfigurationProperties(MongoProperties.class)
+@EnableConfigurationProperties({MongoProperties.class, CasConfigurationProperties.class, CasManagementConfigurationProperties.class})
 public class Config {
 
     @Bean
@@ -43,26 +47,26 @@ public class Config {
         return new JdkMongoSessionConverter(Duration.ofMinutes(15L));
     }
 
-    @Bean
-    @ConditionalOnMissingBean(MongoClient.class)
-    public MongoClient mongoClient(MongoProperties properties, Environment environment,
-                             ObjectProvider<MongoClientSettingsBuilderCustomizer> builderCustomizers,
-                             ObjectProvider<MongoClientSettings> settings) {
-        return new MongoClientFactory(properties, environment,
-                builderCustomizers.orderedStream().collect(Collectors.toList()))
-                .createMongoClient(settings.getIfAvailable());
-    }
-
-    // Spring Boot 2.5
 //    @Bean
 //    @ConditionalOnMissingBean(MongoClient.class)
-//    MongoClient mongo(
-//            ObjectProvider<MongoClientSettingsBuilderCustomizer> builderCustomizers,
-//            MongoClientSettings settings
-//    ) {
-//        return new MongoClientFactory(builderCustomizers.orderedStream().collect(Collectors.toList()))
-//                .createMongoClient(settings);
+//    public MongoClient mongoClient(MongoProperties properties, Environment environment,
+//                             ObjectProvider<MongoClientSettingsBuilderCustomizer> builderCustomizers,
+//                             ObjectProvider<MongoClientSettings> settings) {
+//        return new MongoClientFactory(properties, environment,
+//                builderCustomizers.orderedStream().collect(Collectors.toList()))
+//                .createMongoClient(settings.getIfAvailable());
 //    }
+
+    // Spring Boot 2.5
+    @Bean
+    @ConditionalOnMissingBean(MongoClient.class)
+    MongoClient mongo(
+            ObjectProvider<MongoClientSettingsBuilderCustomizer> builderCustomizers,
+            MongoClientSettings settings
+    ) {
+        return new MongoClientFactory(builderCustomizers.orderedStream().collect(Collectors.toList()))
+                .createMongoClient(settings);
+    }
 
     @Bean
     @ConditionalOnMissingBean(MongoClientSettings.class)
@@ -71,12 +75,12 @@ public class Config {
     }
 
     // Spring Boot 2.5
-//    @Bean
-//    MongoPropertiesClientSettingsBuilderCustomizer mongoPropertiesCustomizer(
-//            MongoProperties properties,
-//            Environment environment
-//    ) {
-//        return MongoPropertiesClientSettingsBuilderCustomizer(properties, environment)
-//    }
+    @Bean
+    MongoPropertiesClientSettingsBuilderCustomizer mongoPropertiesCustomizer(
+            MongoProperties properties,
+            Environment environment
+    ) {
+        return new MongoPropertiesClientSettingsBuilderCustomizer(properties, environment);
+    }
 
 }

@@ -1,6 +1,6 @@
 version: '3'
 services:
-  cas-management:
+  mgmt:
     build: .
     ports:
      - "8443:8443"
