@@ -62,7 +62,7 @@ apply plugin: "io.freefair.war-overlay"
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
 apply plugin: "io.freefair.lombok"
-apply plugin:"maven-publish"
+apply plugin: "maven-publish"
 
 apply from: rootProject.file("gradle/springboot.gradle")
 apply from: rootProject.file("gradle/jib.gradle")
@@ -185,7 +185,8 @@ publishing {
     }
     publications {
         mavenJar(MavenPublication) {
-            from components.web
+            artifact bootWar
+//            from components.web
         }
     }
 }

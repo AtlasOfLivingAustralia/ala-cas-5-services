@@ -18,6 +18,7 @@ bootWar {
     }
 
 //    archiveName "cas-management.war"
+    enabled = true
     baseName "cas-management"
     classifier 'exec'
 
