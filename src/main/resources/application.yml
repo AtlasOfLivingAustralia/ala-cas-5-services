@@ -152,6 +152,7 @@ mgmt:
   delegated:
     enabled: false
   user-properties-file: classpath:users.properties
+  lucene-index-dir: /data/cas-management/lucene
 #mgmt.userReposDir=/etc/cas/user-repos
 
 # Override these for non-ALA deployments

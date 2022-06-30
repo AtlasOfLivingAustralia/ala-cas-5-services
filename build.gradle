@@ -134,6 +134,7 @@ dependencies {
 
 
     compileOnly "org.apereo.cas:cas-mgmt-webapp-init"
+    compileOnly "org.apereo.cas:cas-mgmt-webapp-config"
     // These deps are in the WAR overlay, but IntelliJ can not find them so
     // they're replicated here.
 //    implementation "org.apereo.cas:cas-server-core-configuration"
