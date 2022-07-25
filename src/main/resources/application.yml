@@ -136,7 +136,8 @@ cas:
     #    watcherEnabled: true
     #    repeatInterval: 120000
     #    startDelay: 15000
-    initFromJson: false
+    core:
+      initFromJson: false
     #    json:
     #      location: classpath:/services
 #    mongo:
