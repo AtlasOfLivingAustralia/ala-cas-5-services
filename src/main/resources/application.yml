@@ -132,14 +132,12 @@ cas:
         # ALA attributes
         primary_user_type: primaryUserType
         secondary_user_type: secondaryUserType
-  serviceRegistry:
-    #    watcherEnabled: true
-    #    repeatInterval: 120000
-    #    startDelay: 15000
+  service-registry:
     core:
-      initFromJson: false
-    #    json:
-    #      location: classpath:/services
+      init-from-json: false
+    json:
+#      location: classpath:services
+      watcher-enabled: false
 #    mongo:
 #      collection: services
 #      databaseName: cas-service-registry
