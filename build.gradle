@@ -161,7 +161,7 @@ dependencies {
 //    implementation "org.apereo.cas:cas-mgmt-support-saml"
 //    implementation "org.apereo.cas:cas-mgmt-api-core"
 //    implementation "org.apereo.cas:cas-mgmt-support-version-control"
-//    implementation "org.apereo.cas:cas-mgmt-core"
+    compileOnly "org.apereo.cas:cas-mgmt-core"
 //    implementation "org.apereo.cas:cas-mgmt-config-version-control"
 //    implementation "org.apereo.cas:cas-mgmt-config-submissions"
 //    implementation "org.apereo.cas:cas-mgmt-config-core"

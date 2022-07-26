@@ -1,4 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   org.apereo.cas.config.CasOverlayOverrideConfiguration, \
   au.org.ala.cas.management.Config, \
-  au.org.ala.cas.management.ActuatorConfig
+  au.org.ala.cas.management.ActuatorConfig, \
+  au.org.ala.cas.management.WebConfig
