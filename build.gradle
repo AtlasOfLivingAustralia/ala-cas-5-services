@@ -131,7 +131,7 @@ dependencies {
 
     runtimeOnly 'mysql:mysql-connector-java:8.0.26'
 
-
+    implementation "org.apereo.cas:cas-server-core-services-api"
 
     compileOnly "org.apereo.cas:cas-mgmt-webapp-init"
     compileOnly "org.apereo.cas:cas-mgmt-webapp-config"
