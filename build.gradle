@@ -122,14 +122,14 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-mongo-service-registry"
 
 //    implementation "org.apereo.cas:cas-server-support-session-mongo:${casVersion}"
-    implementation 'org.springframework.session:spring-session-data-mongodb:2.6.4'
-    implementation 'org.springframework.session:spring-session-core:2.6.3'
-    implementation 'org.springframework.data:spring-data-mongodb:3.4.0'
+    implementation 'org.springframework.session:spring-session-data-mongodb:2.7.0'
+    implementation 'org.springframework.session:spring-session-core:2.7.0'
+    implementation 'org.springframework.data:spring-data-mongodb:3.4.8'
     implementation 'org.mongodb:mongodb-driver-sync:4.6.0'
 
 //    implementation "org.apereo.cas:cas-mgmt-api-configuration:$casMgmtServerVersion"
 
-    runtimeOnly 'mysql:mysql-connector-java:8.0.26'
+    runtimeOnly 'mysql:mysql-connector-java:8.0.28'
 
     implementation "org.apereo.cas:cas-server-core-services-api"
 
