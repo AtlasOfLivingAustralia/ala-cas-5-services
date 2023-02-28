@@ -1,7 +1,8 @@
 package au.org.ala.cas.management;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.BaseWebBasedRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -19,20 +20,29 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport {
 
+    /**
+     * TODO Are these fixed upstream now?
+     */
     @Bean
     MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(ObjectMapper jacksonObjectMapper) {
-        jacksonObjectMapper.addMixIn(AbstractRegisteredService.class, AbstractRegisteredServiceMixin.class);
+        jacksonObjectMapper.addMixIn(BaseWebBasedRegisteredService.class, AbstractRegisteredServiceMixin.class);
         jacksonObjectMapper.addMixIn(RegexRegisteredService.class, RegexRegisteredServiceMixin.class);
+        jacksonObjectMapper.addMixIn(CasRegisteredService.class, RegexRegisteredServiceMixin.class);
         jacksonObjectMapper.addMixIn(OAuthRegisteredService.class, OAuthRegisteredServiceMixin.class);
         jacksonObjectMapper.addMixIn(OidcRegisteredService.class, OidcRegisteredServiceMixin.class);
 
         return new MappingJackson2HttpMessageConverter(jacksonObjectMapper);
     }
+
+    /**
+     * TODO Are these fixed upstream now?
+     */
     @Bean
     Jackson2ObjectMapperBuilderCustomizer nonNullSerialisersMixins() {
         return jacksonObjectMapperBuilder -> {
-            jacksonObjectMapperBuilder.mixIn(AbstractRegisteredService.class, AbstractRegisteredServiceMixin.class);
+            jacksonObjectMapperBuilder.mixIn(BaseWebBasedRegisteredService.class, AbstractRegisteredServiceMixin.class);
             jacksonObjectMapperBuilder.mixIn(RegexRegisteredService.class, RegexRegisteredServiceMixin.class);
+            jacksonObjectMapperBuilder.mixIn(CasRegisteredService.class, RegexRegisteredServiceMixin.class);
             jacksonObjectMapperBuilder.mixIn(OAuthRegisteredService.class, OAuthRegisteredServiceMixin.class);
             jacksonObjectMapperBuilder.mixIn(OidcRegisteredService.class, OidcRegisteredServiceMixin.class);
         };
