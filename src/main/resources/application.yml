@@ -33,7 +33,7 @@ spring:
 server:
   forward-headers-strategy: native
   tomcat:
-    remoteip:
+    remote-ip:
       protocol-header: x-forwarded-proto
       port-header: x-forwarded-port
       remote-ip-header: x-forwarded-for
